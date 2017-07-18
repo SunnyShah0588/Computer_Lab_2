@@ -1,0 +1,153 @@
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.*;
+public class Naive_Yadaw {
+ 
+	public static void main(String argv[]) {
+ 
+    try {
+ 
+    	File fXmlFile = new File("/home/administrator/Desktop/Naive_Bayes/simple.xml");
+    	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+    	Document doc = dBuilder.parse(fXmlFile);
+ 
+    		//doc.getDocumentElement().normalize();
+    	BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+    	System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+ 
+    	NodeList nList = doc.getElementsByTagName("row");
+ 	
+    	float totalsamples=nList.getLength();
+    	
+    	System.out.println("TOTAL Samples"+totalsamples);
+    	
+    	float service=0,research=0,consultancy=0;
+    	float as=0,qs=0,es=0;
+    	float ac=0,qc=0,ec=0;
+    	float ar=0,qr=0,er=0;
+    	float researchPred,consultancyPred,servicePred;
+    	
+    	System.out.println("Enter the age:	");
+    	String s = b.readLine();
+    	
+    	System.out.println("Enter the Qualification:	");
+    	String s1 = b.readLine();
+    	
+    	System.out.println("Enter the exp:	");
+    	String s2 = b.readLine();
+    	
+    	for (int temp = 0; temp < nList.getLength(); temp++) {
+ 
+    		Node nNode = nList.item(temp);
+ 
+    			//System.out.println("\nCurrent Element :" + nNode.getNodeName());
+ 
+    		if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+ 
+    			Element eElement = (Element) nNode;
+    			
+    			String workType =   eElement.getElementsByTagName("Work_type").item(0).getTextContent();
+    			String age  =   eElement.getElementsByTagName("Age").item(0).getTextContent();
+    		    String qul  =   eElement.getElementsByTagName("Qualification").item(0).getTextContent();
+    			String exp  =   eElement.getElementsByTagName("Experience").item(0).getTextContent();
+    			
+    			
+                int result = Integer.parseInt(age);
+                int result1 = Integer.parseInt(exp);
+              
+                
+    			
+    			if(workType.equals("Consultancy"))
+    				consultancy++;
+    			else if(workType.equals("Service"))
+    				service++;
+    			else
+    				research++;
+    			
+    			
+    				if(result >= 26 && result <= 30){
+    				
+    				 System.out.println(result);
+    			
+    			if(workType.equals("Service"))
+    				as++;
+    			 else if(workType.equals("Consultancy"))
+    				ac++;
+    			 else if(workType.equals("Research"))
+    				ar++;
+    			}
+    			
+    			
+    						
+    			if(qul.equals(s1) && workType.equals("Service"))
+    				qs++;
+    			 else if(qul.equals(s1) && workType.equals("Consultancy"))
+    				qc++;
+    			 else if(qul.equals(s1) && workType.equals("Research"))
+    				qr++;
+    				
+    				
+    			if(result1 >= 6 && result1 <= 10){
+    			
+    			 System.out.println(result1);
+    			
+    				if(workType.equals("Service"))
+    				es++;
+    			 else if(workType.equals("Consultancy"))
+    				ec++;
+    			 else if(workType.equals("Research"))
+    				er++;
+    				}
+    		}
+    	}
+    	
+    	
+     
+     
+		researchPred = (ar/research)*(qr/research)*(er/research)*(research/totalsamples);
+			
+			    System.out.println("researchPred"+researchPred);
+		
+		consultancyPred = (ac/consultancy)*(qc/consultancy)*(ec/consultancy)*(consultancy/totalsamples);
+				
+				System.out.println("consultancyPred"+consultancyPred);
+				
+		servicePred = (as/service)*(qs/service)*(es/service)*(service/totalsamples);
+				
+				System.out.println("servicePred"+servicePred);
+				
+		
+		if(consultancyPred==0|servicePred==0|researchPred==0)
+		{
+			System.out.println("Can't predict");
+		}
+		else
+		if(researchPred>consultancyPred)
+		{
+			if(researchPred>servicePred)
+				System.out.println(" Research");
+			else
+				System.out.println("Service");
+		}
+		else 
+			if(servicePred>consultancyPred)
+				System.out.println("Service");
+		
+			else
+				System.out.println("Consultancy");
+		
+    } catch (Exception e) {
+	e.printStackTrace();
+    }
+	}
+}
+
